@@ -1,0 +1,132 @@
+/* RESET */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+}
+
+/* BASE */
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    background-color: #333333;
+}
+
+.container {
+    max-width: 60rem;
+    margin: 0 auto;
+}
+
+/* TYPOGRAPHY */
+
+body {
+    font-family: 'Cairo', sans-serif;
+    color: #efefef;
+    line-height: 1;
+}
+
+.heading {
+    text-align: center;
+    font-size: 4rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: .2rem;
+}
+
+/* BUTTONS */
+
+.btn {
+    border: none;
+    background-color: transparent;
+    text-transform: uppercase;
+
+    &--start {
+        float: right;
+        font-size: 2.5rem;
+    }
+}
+
+/* MENU */
+
+.header {
+    margin: 3rem 0;
+
+    &__menu {
+        margin-top: 2rem;
+        padding: 1rem 2rem;
+        background-color: #efefef;
+        border-radius: 5px;
+    }
+
+    &__timer {
+        display: inline-block;
+        font-size: 2.5rem;
+        color: #333333;
+    }
+}
+
+/* SQUARES */
+
+.squares {
+    width: 100%;
+    padding-bottom: 84%;
+}
+
+.square {
+    width: 16%;
+    padding-bottom: 16%;
+    float: left;
+    margin: .33%;
+    
+    position: relative;
+    
+    perspective: 40rem;
+    -moz-perspective: 40rem;
+    
+    &__side {
+
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: inline-block;
+        width: 100%;
+        padding-bottom: 100%;
+        backface-visibility: hidden;
+        overflow: hidden;
+        border-radius: 5px;
+        transition: all .6s;
+
+        &--front {
+            background-color: #efefef;
+        }
+
+        &--back {
+            background-color: yellow;
+            transform: rotateY(-180deg);
+        }
+    }
+
+    &:hover &__side--front {
+        transform: rotateY(180deg);
+    }
+
+    &:hover &__side--back {
+        transform: rotateY(0);
+    }
+}
+
+/* FOOTER */
+
+.footer {
+    margin-top: 1rem;
+
+    & p {
+        text-align: right;
+        font-size: 1.2rem;
+        padding-right: 1rem;
+    }
+}
