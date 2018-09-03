@@ -6,6 +6,7 @@ class Game {
     constructor() {
         this.isPlayed = false;
         this.colors = [];
+        this.comparedColors = [];
     }
 
     setSquaresAmount(squaresAmount) {
@@ -47,6 +48,8 @@ const gameView = {
 
 const game = new Game();
 
+// Starting the game
+
 start.addEventListener('click', e => {
     game.isPlayed = true;
     game.setSquaresAmount(gameView.getSquaresAmount());
@@ -54,9 +57,32 @@ start.addEventListener('click', e => {
     game.setColors(Array.from(squaresSide), game.colors)
 });
 
+// Handling clicking on squares
+
 Array.from(squares).forEach(el => el.addEventListener('click', () => {
     if(game.isPlayed) {
-        el.children[0].style.transform = 'rotateY(180deg)';
-        el.children[1].style.transform = 'rotateY(0)';
+        if (game.comparedColors.length < 2 && !el.classList.contains('active')) {
+            el.classList.add('active');
+            el.children[0].style.transform = 'rotateY(180deg)';
+            el.children[1].style.transform = 'rotateY(0)';
+            game.comparedColors.push(el);
+            console.log(game.comparedColors);
+        }
+        setTimeout(()=> {
+            if (game.comparedColors.length === 2) {
+                if (game.comparedColors[0].children[1].style.backgroundColor === game.comparedColors[1].children[1].style.backgroundColor) {
+                    game.comparedColors[0].style.visibility = 'hidden';
+                    game.comparedColors[1].style.visibility = 'hidden';
+                } else {
+                    game.comparedColors[0].children[0].style.transform = 'rotateY(0)';
+                    game.comparedColors[0].children[1].style.transform = 'rotateY(180deg)';
+                    game.comparedColors[0].classList.remove('active');
+                    game.comparedColors[1].children[0].style.transform = 'rotateY(0)';
+                    game.comparedColors[1].children[1].style.transform = 'rotateY(180deg)';
+                    game.comparedColors[1].classList.remove('active');
+                }
+                game.comparedColors.splice(0, 2);
+            }
+        }, 1000);
     }
 }));
