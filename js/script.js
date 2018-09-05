@@ -34,12 +34,11 @@ class GameView {
         this.elements = {
             message: document.querySelector('.header__message'),
             timer: document.querySelector('.header__timer span'),
-            squares: document.querySelector('.squares'),
-            start: document.querySelector('.btn--start'),
+            squares: document.querySelector('.squares')
         }
     }
 
-    getSquaresAmount() { return 6; }
+    getSquaresAmount() { return 18; }
 
     getGameMode() { return 'colors'; }
 
@@ -69,6 +68,15 @@ class GameView {
         };
     }
 
+    rotateSquare(square, status) {
+        // if status is equal to 1 then turn square to its backside
+        status === 1 ? square.classList.add('active') : square.classList.remove('active');
+        square.children[`${1 - status}`].style.transform = 'rotateY(180deg)';
+        square.children[`${0 + status}`].style.transform = 'rotateY(0)';
+    }
+
+    hideSquare(square) { square.style.visibility = 'hidden'; }
+
     clearSquares() { document.querySelector('.squares').innerHTML = ''; }
     
     displayMessage(type) {
@@ -82,68 +90,86 @@ class GameView {
     clearTimer() { this.elements.timer.innerHTML = 0; }
 };
 
-const gameModel = new GameModel();
-const gameView = new GameView();
+class GameController {
+    constructor(model, view) {
+        this.gameModel = model;
+        this.gameView = view;
+    }
 
-// Starting the game
+    resetGame() {
+        this.gameView.clearSquares();
+        this.gameView.clearMessage();
+        this.gameView.clearTimer();
+        this.gameModel.resetTimer();
+        this.gameView.displayTimer(this.gameModel.timer);
+    }
 
-const runTime = () => {
-    let intervalID = setInterval(() => {
-        gameModel.updateTimer();
-        gameView.displayTimer(gameModel.timer);
-        if (!gameModel.isPlayed) clearInterval(intervalID);
-    }, 1000);
-}
+    displayUI() {
+        this.gameModel.setSquaresAmount(this.gameView.getSquaresAmount());
+        this.gameModel.setColors(this.gameModel.squaresAmount);
+        this.gameView.renderSquares(this.gameModel.squaresAmount, this.gameModel.colors);
+    }
 
-gameView.elements.start.addEventListener('click', e => {
-    gameView.clearSquares();
-    gameView.clearMessage();
-    gameView.clearTimer();
-    gameModel.resetTimer();
-    gameModel.setSquaresAmount(gameView.getSquaresAmount());
-    gameModel.setColors(gameModel.squaresAmount);
-    gameView.renderSquares(gameModel.squaresAmount, gameModel.colors);
-    const squaresSide = document.querySelectorAll('.square__side--back');
-    gameModel.setColors(Array.from(squaresSide), gameModel.colors);
-    gameModel.setCounter();
-    gameModel.isPlayed = true;
-    runTime();
-});
+    runTime() {
+        let intervalID = setInterval(() => {
+            this.gameModel.updateTimer();
+            this.gameView.displayTimer(this.gameModel.timer);
+            if (!this.gameModel.isPlayed) clearInterval(intervalID);
+        }, 1000);
+    }
 
-// Handling clicking on squares
+    startGame() {
+        this.gameModel.isPlayed = true;
+        this.gameModel.setCounter();
+        this.runTime();
+    }
 
-gameView.elements.squares.addEventListener('click', e => {
-    if(gameModel.isPlayed) {
-        const square = e.target.closest('.square');
+    initGame() {
+        this.resetGame();
+        this.displayUI();
+        this.startGame();
+    }
+
+    compareSquares(squares) {
+        setTimeout(()=> {
+            if (squares[0].children[1].style.backgroundColor === squares[1].children[1].style.backgroundColor) {
+                gameView.hideSquare(squares[0]);
+                gameView.hideSquare(squares[1]);
+                gameModel.counter --;
+            } else {
+                gameView.rotateSquare(squares[0], 0);
+                gameView.rotateSquare(squares[1], 0);
+            }
+            squares.splice(0, 2);
+            if (gameModel.counter === 0) {
+                gameModel.isPlayed = false;
+                gameView.displayMessage('win');
+            }
+        }, 500);
+    }
+
+    handleSquare(square) {
         if(square) {
             if (gameModel.comparedElements.length < 2 && !square.classList.contains('active')) {
-                square.classList.add('active');
-                square.children[0].style.transform = 'rotateY(180deg)';
-                square.children[1].style.transform = 'rotateY(0)';
+                gameView.rotateSquare(square, 1);
                 gameModel.comparedElements.push(square);
             }
-            setTimeout(()=> {
-                if (gameModel.comparedElements.length === 2) {
-                    if (gameModel.comparedElements[0].children[1].style.backgroundColor === gameModel.comparedElements[1].children[1].style.backgroundColor) {
-                        gameModel.comparedElements[0].style.visibility = 'hidden';
-                        gameModel.comparedElements[1].style.visibility = 'hidden';
-                        gameModel.counter --;
-                    } else {
-                        gameModel.comparedElements[0].children[0].style.transform = 'rotateY(0)';
-                        gameModel.comparedElements[0].children[1].style.transform = 'rotateY(180deg)';
-                        gameModel.comparedElements[0].classList.remove('active');
-                        gameModel.comparedElements[1].children[0].style.transform = 'rotateY(0)';
-                        gameModel.comparedElements[1].children[1].style.transform = 'rotateY(180deg)';
-                        gameModel.comparedElements[1].classList.remove('active');
-                    }
-                    gameModel.comparedElements.splice(0, 2);
-                    if (gameModel.counter === 0) {
-                        gameModel.isPlayed = false;
-                        gameView.displayMessage('win');
-                    }
-                }
-            }, 1000);
+            if (gameModel.comparedElements.length === 2) {
+                this.compareSquares(gameModel.comparedElements);
+            }
         }
-        
     }
-});
+
+    // EVENT HANDLERS
+    listenEvents() {
+        document.querySelector('.btn--start').addEventListener('click', () => this.initGame());
+        gameView.elements.squares.addEventListener('click', e => {
+            if(gameModel.isPlayed) this.handleSquare(e.target.closest('.square'));
+        });
+    };
+}
+
+const gameModel = new GameModel();
+const gameView = new GameView();
+const gameController = new GameController(gameModel, gameView);
+gameController.listenEvents();
