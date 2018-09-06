@@ -17,9 +17,20 @@
         <header class="header">
             <h1 class="heading">Test your memory now</h1>
             <div class="header__menu">
-                <p class="header__timer"><span>0</span> sec.</p>
-                <p class="header__message"></p>
-                <button class="btn btn--start">Start</button>
+                <div class="header__settings">
+                    <p class="header__setting">squares:</p>
+                    <input type="radio" name="squares" class="header__radio" id="squares-18" checked>
+                    <label for="squares-18" class="header__label">18</label>
+                    <input type="radio" name="squares" class="header__radio" id="squares-24">
+                    <label for="squares-24" class="header__label">24</label>
+                    <input type="radio" name="squares" class="header__radio" id="squares-30">
+                    <label for="squares-30" class="header__label">30</label>
+                </div>
+                <div class="header__displayer">
+                    <p class="header__timer"><span>0</span> sec.</p>
+                    <p class="header__message"></p>
+                    <button class="btn btn--start">New game</button>
+                </div>
             </div>
         </header>
 

@@ -1,6 +1,5 @@
 class GameModel {
     constructor() {
-        this.isPlayed = false;
         this.colors = [];
         this.comparedElements = [];
     }
@@ -10,6 +9,8 @@ class GameModel {
     setGameMode(gameMode) { this.gameMode = gameMode; }
 
     setTimeMode(timeMode) { this.timeMode = timeMode; }
+
+    setIsPlayed(isPlayed) { this.isPlayed = isPlayed; }
 
     setCounter() { this.counter = this.squaresAmount / 2; }
 
@@ -32,13 +33,21 @@ class GameModel {
 class GameView {
     constructor() {
         this.elements = {
+            squaresRadios: document.querySelectorAll('.header__radio'),
             message: document.querySelector('.header__message'),
             timer: document.querySelector('.header__timer span'),
+            start: document.querySelector('.btn--start'),
             squares: document.querySelector('.squares')
         }
     }
 
-    getSquaresAmount() { return 18; }
+    getSquaresAmount() {
+        let num;
+        Array.from(this.elements.squaresRadios).forEach(el => {    
+            if (el.checked) num = parseInt(document.querySelector(`.header__label[for="${el.id}"]`).innerHTML);
+        }); 
+        return num;
+    }
 
     getGameMode() { return 'colors'; }
 
@@ -88,6 +97,10 @@ class GameView {
     displayTimer(time) { this.elements.timer.innerHTML = time; }
 
     clearTimer() { this.elements.timer.innerHTML = 0; }
+
+    toggleStartButton(isPlayed) {
+        isPlayed ? this.elements.start.innerHTML = 'New game' : this.elements.start.innerHTML = 'Play again?';
+    }
 };
 
 class GameController {
@@ -97,6 +110,7 @@ class GameController {
     }
 
     resetGame() {
+        this.gameModel.setIsPlayed(false);
         this.gameView.clearSquares();
         this.gameView.clearMessage();
         this.gameView.clearTimer();
@@ -119,9 +133,10 @@ class GameController {
     }
 
     startGame() {
-        this.gameModel.isPlayed = true;
+        this.gameModel.setIsPlayed(true);
         this.gameModel.setCounter();
         this.runTime();
+        this.gameView.toggleStartButton(this.gameModel.isPlayed);
     }
 
     initGame() {
@@ -133,28 +148,29 @@ class GameController {
     compareSquares(squares) {
         setTimeout(()=> {
             if (squares[0].children[1].style.backgroundColor === squares[1].children[1].style.backgroundColor) {
-                gameView.hideSquare(squares[0]);
-                gameView.hideSquare(squares[1]);
-                gameModel.counter --;
+                this.gameView.hideSquare(squares[0]);
+                this.gameView.hideSquare(squares[1]);
+                this.gameModel.counter --;
             } else {
-                gameView.rotateSquare(squares[0], 0);
-                gameView.rotateSquare(squares[1], 0);
+                this.gameView.rotateSquare(squares[0], 0);
+                this.gameView.rotateSquare(squares[1], 0);
             }
             squares.splice(0, 2);
-            if (gameModel.counter === 0) {
-                gameModel.isPlayed = false;
-                gameView.displayMessage('win');
+            if (this.gameModel.counter === 0) {
+                this.gameModel.setIsPlayed(false);
+                this.gameView.displayMessage('win');
+                this.gameView.toggleStartButton(this.gameModel.isPlayed);
             }
         }, 500);
     }
 
     handleSquare(square) {
         if(square) {
-            if (gameModel.comparedElements.length < 2 && !square.classList.contains('active')) {
-                gameView.rotateSquare(square, 1);
-                gameModel.comparedElements.push(square);
+            if (this.gameModel.comparedElements.length < 2 && !square.classList.contains('active')) {
+                this.gameView.rotateSquare(square, 1);
+                this.gameModel.comparedElements.push(square);
             }
-            if (gameModel.comparedElements.length === 2) {
+            if (this.gameModel.comparedElements.length === 2) {
                 this.compareSquares(gameModel.comparedElements);
             }
         }

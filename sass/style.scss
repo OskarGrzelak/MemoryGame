@@ -57,9 +57,43 @@ body {
 
     &__menu {
         margin-top: 2rem;
-        padding: 1rem 2rem;
+        padding: 1rem 0;
         background-color: #efefef;
         border-radius: 5px;
+    }
+
+    &__settings {
+        padding: 1rem 2rem;
+        margin-bottom: 1rem;
+        background-color: blue;
+    }
+
+    &__setting {
+        display: inline-block;
+        font-size: 2.5rem;
+        color: #efefef;
+        text-transform: uppercase;
+        margin-right: 1rem;
+    }
+
+    &__radio {
+        display: none;
+
+        &:checked+label {
+            background-color: #efefef;
+            color: #333333;
+        }
+    }
+
+    &__label {
+        font-size: 2.5rem;
+        color: #efefef;
+        padding: 0 1rem;
+        transition: all .2s;
+    }
+
+    &__displayer {
+        padding: 0 2rem;
     }
 
     &__timer {
@@ -116,14 +150,6 @@ body {
             transform: rotateY(-180deg);
         }
     }
-
-   /*  &:hover &__side--front {
-        transform: rotateY(180deg);
-    }
-
-    &:hover &__side--back {
-        transform: rotateY(0);
-    } */
 }
 
 /* FOOTER */
