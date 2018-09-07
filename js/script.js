@@ -1,6 +1,7 @@
 class GameModel {
     constructor() {
         this.colors = [];
+        this.images = [];
         this.comparedElements = [];
     }
 
@@ -28,12 +29,33 @@ class GameModel {
             this.colors.push(this.colors[i*2]);
         };
     }
+
+    async getImages(num) {
+        try {
+            const res = await fetch(`https://api.unsplash.com/photos/random?count=${num/2}&client_id=3fe4ce55413a6e155249e96c36371f0ac4a325f45899afc896233ea79c36f63b`);
+            const result = await res.json();
+
+            for (let i = 0; i < num/2; i ++) {
+                this.images.push({ url: result[i].urls.small });
+                this.images.push(this.images[i*2]);
+            };
+
+            return result;
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
+    setImages(img) {
+        
+    }
 }
 
 class GameView {
     constructor() {
         this.elements = {
-            squaresRadios: document.querySelectorAll('.header__radio'),
+            squaresRadios: document.querySelectorAll('.header__radio--squares'),
+            modeRadios: document.querySelectorAll('.header__radio--mode'),
             message: document.querySelector('.header__message'),
             timer: document.querySelector('.header__timer span'),
             start: document.querySelector('.btn--start'),
@@ -49,7 +71,13 @@ class GameView {
         return num;
     }
 
-    getGameMode() { return 'colors'; }
+    getGameMode() { 
+        let mode;
+        Array.from(this.elements.modeRadios).forEach(el => {    
+            if (el.checked) mode = document.querySelector(`.header__label[for="${el.id}"]`).innerHTML;
+        });
+        return mode; 
+    }
 
     getTimeMode() { return 'normal'; }
 
@@ -64,16 +92,16 @@ class GameView {
         return document.querySelector('.squares').lastElementChild;
     }
 
-    colorSquare(square, colors) {
-        const index = Math.floor(Math.random()*(colors.length - 1));
-        square.children[1].style.backgroundColor = colors[index];
-        colors.splice(index, 1);
+    colorSquare(square, mode, arr) {
+        const index = Math.floor(Math.random()*(arr.length - 1));
+        mode === 'colors' ? square.children[1].style.background = arr[index] : square.children[1].style.background = `url(${arr[index].url})`;
+        arr.splice(index, 1);
     }
 
-    renderSquares(num, colors) {
+    renderSquares(num, mode, arr) {
         for (let i = 0; i < num; i ++) {
             const square = this.renderSquare(i+1);
-            this.colorSquare(square, colors)
+            this.colorSquare(square, mode, arr)
         };
     }
 
@@ -116,12 +144,18 @@ class GameController {
         this.gameView.clearTimer();
         this.gameModel.resetTimer();
         this.gameView.displayTimer(this.gameModel.timer);
+        this.gameModel.setGameMode(this.gameView.getGameMode());
     }
 
-    displayUI() {
+    async displayUI() {
         this.gameModel.setSquaresAmount(this.gameView.getSquaresAmount());
-        this.gameModel.setColors(this.gameModel.squaresAmount);
-        this.gameView.renderSquares(this.gameModel.squaresAmount, this.gameModel.colors);
+        if (this.gameModel.gameMode === 'colors') { 
+            this.gameModel.setColors(this.gameModel.squaresAmount);
+            this.gameView.renderSquares(this.gameModel.squaresAmount, this.gameModel.gameMode, this.gameModel.colors);
+        } else if (this.gameModel.gameMode === 'images') {
+            await this.gameModel.getImages(this.gameModel.squaresAmount);
+            this.gameView.renderSquares(this.gameModel.squaresAmount, this.gameModel.gameMode, this.gameModel.images);
+        }
     }
 
     runTime() {
@@ -147,7 +181,7 @@ class GameController {
 
     compareSquares(squares) {
         setTimeout(()=> {
-            if (squares[0].children[1].style.backgroundColor === squares[1].children[1].style.backgroundColor) {
+            if (squares[0].children[1].style.background === squares[1].children[1].style.background) {
                 this.gameView.hideSquare(squares[0]);
                 this.gameView.hideSquare(squares[1]);
                 this.gameModel.counter --;

@@ -146,7 +146,9 @@ body {
         }
 
         &--back {
-            background-color: yellow;
+            background: yellow;
+            background-size: cover;
+            background-position: center;
             transform: rotateY(-180deg);
         }
     }
