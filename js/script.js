@@ -236,7 +236,7 @@ class GameController {
                 this.gameModel.setIsPlayed(false);
                 this.gameView.displayMessage('win');
                 this.gameView.toggleStartButton(this.gameModel.isPlayed);
-                this.gameView.displayGallery(this.gameModel.img);
+                if(this.gameModel.gameMode === 'images') this.gameView.displayGallery(this.gameModel.img);
             }
         }, 500);
     }
