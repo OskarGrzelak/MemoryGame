@@ -37,6 +37,22 @@ body {
     letter-spacing: .2rem;
 }
 
+.heading-sec {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .1rem;
+}
+
+.credits {
+    font-size: 1.4rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .1rem;
+    text-align: right;
+}
+
 /* BUTTONS */
 
 .btn {
@@ -48,6 +64,12 @@ body {
         float: right;
         font-size: 2.5rem;
     }
+}
+
+/* LINKS */
+
+a {
+    color: inherit;
 }
 
 /* MENU */
@@ -151,6 +173,59 @@ body {
             background-position: center;
             transform: rotateY(-180deg);
         }
+    }
+}
+
+/* GALLERY */
+
+.gallery {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+
+    &__window {
+        height: 100%;
+        margin-top: 2rem;
+        position: relative;
+    }
+
+    &__img {
+        height: 30rem;
+    }
+
+    &__credit {
+        margin-top: 2rem;
+    }
+
+    &__left {
+        position: absolute;
+        top: 0;
+        left: -5rem;
+        height: 100%;
+        width: 5rem;
+        background-color: orange;
+    }
+    &__right {
+        position: absolute;
+        top: 0;
+        right: -5rem;
+        height: 100%;
+        width: 5rem;
+        background-color: orange;
+    }
+
+    &__sign {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 6rem;
+    }
+
+    &--displayed {
+        display: block;
     }
 }
 

@@ -1,5 +1,7 @@
 class GameModel {
     constructor() {
+        this.img = [];
+        this.curImgIndex = 0;
         this.colors = [];
         this.images = [];
         this.comparedElements = [];
@@ -36,10 +38,12 @@ class GameModel {
             const result = await res.json();
 
             for (let i = 0; i < num/2; i ++) {
-                this.images.push({ url: result[i].urls.small });
-                this.images.push(this.images[i*2]);
+                this.img.push({ 
+                    url: result[i].urls.small,
+                    author: result[i].user.name,
+                    authorLink: result[i].user.links.html
+                });
             };
-
             return result;
         } catch(err) {
             console.log(err);
@@ -47,8 +51,13 @@ class GameModel {
     }
 
     setImages(img) {
-        
+        for (let i = 0; i < img.length; i ++) {
+            this.images.push(img[i]);
+            this.images.push(this.images[i*2]);
+        };
     }
+
+    clearImages() { this.img = [] }
 }
 
 class GameView {
@@ -59,7 +68,8 @@ class GameView {
             message: document.querySelector('.header__message'),
             timer: document.querySelector('.header__timer span'),
             start: document.querySelector('.btn--start'),
-            squares: document.querySelector('.squares')
+            squares: document.querySelector('.squares'),
+            gallery: document.querySelector('.gallery')
         }
     }
 
@@ -129,6 +139,35 @@ class GameView {
     toggleStartButton(isPlayed) {
         isPlayed ? this.elements.start.innerHTML = 'New game' : this.elements.start.innerHTML = 'Play again?';
     }
+
+    displayGallery(array) { 
+        document.querySelector('.gallery__img').src = array[0].url;
+        document.querySelector('.credits__name').textContent = array[0].author;
+        document.querySelector('.credits__name').href = array[0].authorLink;
+        this.elements.gallery.classList.add('gallery--displayed'); 
+    }
+
+    hideGallery() { this.elements.gallery.classList.remove('gallery--displayed'); }
+
+    changeImage(sign, array, i) {
+        if (sign === 1) {
+            if (i < array.length - 1) {
+                i++;
+            } else {
+                i = 0;
+            }
+        } else {
+            if (i > 0) {
+                i--;
+            } else {
+                i = array.length-1;
+            }
+        }
+        document.querySelector('.gallery__img').src = array[i].url;
+        document.querySelector('.credits__name').textContent = array[i].author;
+        document.querySelector('.credits__name').href = array[i].authorLink;
+        return i;
+    }
 };
 
 class GameController {
@@ -139,6 +178,8 @@ class GameController {
 
     resetGame() {
         this.gameModel.setIsPlayed(false);
+        this.gameModel.clearImages();
+        this.gameView.hideGallery();
         this.gameView.clearSquares();
         this.gameView.clearMessage();
         this.gameView.clearTimer();
@@ -154,6 +195,7 @@ class GameController {
             this.gameView.renderSquares(this.gameModel.squaresAmount, this.gameModel.gameMode, this.gameModel.colors);
         } else if (this.gameModel.gameMode === 'images') {
             await this.gameModel.getImages(this.gameModel.squaresAmount);
+            this.gameModel.setImages(this.gameModel.img);
             this.gameView.renderSquares(this.gameModel.squaresAmount, this.gameModel.gameMode, this.gameModel.images);
         }
     }
@@ -194,6 +236,7 @@ class GameController {
                 this.gameModel.setIsPlayed(false);
                 this.gameView.displayMessage('win');
                 this.gameView.toggleStartButton(this.gameModel.isPlayed);
+                this.gameView.displayGallery(this.gameModel.img);
             }
         }, 500);
     }
@@ -215,6 +258,14 @@ class GameController {
         document.querySelector('.btn--start').addEventListener('click', () => this.initGame());
         gameView.elements.squares.addEventListener('click', e => {
             if(gameModel.isPlayed) this.handleSquare(e.target.closest('.square'));
+        });
+        document.querySelector('.gallery__right').addEventListener('click', () => {
+            const index = this.gameView.changeImage(1, this.gameModel.img, this.gameModel.curImgIndex);
+            this.gameModel.curImgIndex = index;
+        });
+        document.querySelector('.gallery__left').addEventListener('click', () => {
+            const index = this.gameView.changeImage(-1, this.gameModel.img, this.gameModel.curImgIndex);
+            this.gameModel.curImgIndex = index;
         });
     };
 }
