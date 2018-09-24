@@ -13,7 +13,7 @@ html {
 }
 
 body {
-    background-color: #333333;
+    background: linear-gradient(to right, #20002c, #cbb4d4);
 }
 
 .container {
@@ -87,7 +87,7 @@ a {
     &__settings {
         padding: 1rem 2rem;
         margin-bottom: 1rem;
-        background-color: blue;
+        background: linear-gradient(to right, #20002c, #cbb4d4);
     }
 
     &__setting {
@@ -112,6 +112,7 @@ a {
         color: #efefef;
         padding: 0 1rem;
         transition: all .2s;
+        border-radius: 10px;
     }
 
     &__displayer {
@@ -168,9 +169,8 @@ a {
         }
 
         &--back {
-            background: yellow;
-            background-size: cover;
-            background-position: center;
+            background-size: contain;
+            background-position: 50%, 50%;
             transform: rotateY(-180deg);
         }
     }
@@ -193,6 +193,8 @@ a {
 
     &__img {
         height: 30rem;
+        display: block;
+        margin: 0 auto;
     }
 
     &__credit {
@@ -205,7 +207,6 @@ a {
         left: -5rem;
         height: 100%;
         width: 5rem;
-        background-color: orange;
     }
     &__right {
         position: absolute;
@@ -213,7 +214,6 @@ a {
         right: -5rem;
         height: 100%;
         width: 5rem;
-        background-color: orange;
     }
 
     &__sign {
