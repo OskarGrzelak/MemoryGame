@@ -91,6 +91,9 @@ class GameView {
 
     getTimeMode() { return 'normal'; }
 
+    showSquares() { this.elements.squares.style.display = 'block'; }
+    hideSquares() { this.elements.squares.style.display = 'none'; }
+
     renderSquare(id) {
         const markup = `
             <div class="square" id="square-${id}" >
@@ -180,6 +183,7 @@ class GameController {
         this.gameModel.setIsPlayed(false);
         this.gameModel.clearImages();
         this.gameView.hideGallery();
+        this.gameView.showSquares();
         this.gameView.clearSquares();
         this.gameView.clearMessage();
         this.gameView.clearTimer();
@@ -236,6 +240,7 @@ class GameController {
                 this.gameModel.setIsPlayed(false);
                 this.gameView.displayMessage('win');
                 this.gameView.toggleStartButton(this.gameModel.isPlayed);
+                this.gameView.hideSquares();
                 if(this.gameModel.gameMode === 'images') this.gameView.displayGallery(this.gameModel.img);
             }
         }, 500);
