@@ -5,6 +5,7 @@ class GameModel {
         this.colors = [];
         this.images = [];
         this.comparedElements = [];
+        this.intervalID = 0;
     }
 
     setSquaresAmount(squaresAmount) { this.squaresAmount = squaresAmount; }
@@ -180,6 +181,7 @@ class GameController {
     }
 
     resetGame() {
+        clearInterval(this.gameModel.intervalID);
         this.gameModel.setIsPlayed(false);
         this.gameModel.clearImages();
         this.gameView.hideGallery();
@@ -205,10 +207,10 @@ class GameController {
     }
 
     runTime() {
-        let intervalID = setInterval(() => {
+        this.gameModel.intervalID = setInterval(() => {
             this.gameModel.updateTimer();
             this.gameView.displayTimer(this.gameModel.timer);
-            if (!this.gameModel.isPlayed) clearInterval(intervalID);
+            if (!this.gameModel.isPlayed) clearInterval(this.gameModel.intervalID);
         }, 1000);
     }
 
