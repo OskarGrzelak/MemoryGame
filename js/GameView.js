@@ -61,6 +61,7 @@ class GameView {
         status === 1 ? square.classList.add('active') : square.classList.remove('active');
         square.children[`${1 - status}`].style.transform = 'rotateY(180deg)';
         square.children[`${0 + status}`].style.transform = 'rotateY(0)';
+        square.children[1].style.backgroundSize = 'cover';
     }
 
     hideSquare(square) { square.style.visibility = 'hidden'; }

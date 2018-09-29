@@ -166,17 +166,18 @@ a {
         backface-visibility: hidden;
         overflow: hidden;
         border-radius: 5px;
-        transition: all .6s;
+        transition: all .7s;
 
         &--front {
             background-color: #efefef;
         }
 
         &--back {
-            background-size: contain;
-            background-position: 50%, 50%;
+            /* style below is provided by javascript code */
+            /* background-size: cover;  */
             transform: rotateY(-180deg);
         }
+
     }
 }
 
@@ -195,6 +196,7 @@ a {
 
     &__img {
         height: 30rem;
+        max-width: 100%;
         display: block;
         margin: 0 auto;
     }
@@ -203,19 +205,19 @@ a {
         margin-top: 2rem;
     }
 
-    &__left {
+    &__arrow {
         position: absolute;
         top: 0;
-        left: -5rem;
         height: 100%;
         width: 5rem;
-    }
-    &__right {
-        position: absolute;
-        top: 0;
-        right: -5rem;
-        height: 100%;
-        width: 5rem;
+
+        &--left {
+            left: -5rem;
+        }
+
+        &--right {
+            right: -5rem;
+        }
     }
 
     &__sign {
@@ -224,6 +226,7 @@ a {
         left: 50%;
         transform: translate(-50%, -50%);
         font-size: 6rem;
+        cursor: default;
     }
 
     &--displayed {

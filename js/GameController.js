@@ -69,7 +69,7 @@ class GameController {
                 this.gameView.hideSquares();
                 if(this.gameModel.gameMode === 'images') this.gameView.displayGallery(this.gameModel.img);
             }
-        }, 500);
+        }, 700);
     }
 
     handleSquare(square) {
@@ -90,11 +90,11 @@ class GameController {
         gameView.elements.squares.addEventListener('click', e => {
             if(gameModel.isPlayed) this.handleSquare(e.target.closest('.square'));
         });
-        document.querySelector('.gallery__right').addEventListener('click', () => {
+        document.querySelector('.gallery__arrow--right').addEventListener('click', () => {
             const index = this.gameView.changeImage(1, this.gameModel.img, this.gameModel.curImgIndex);
             this.gameModel.curImgIndex = index;
         });
-        document.querySelector('.gallery__left').addEventListener('click', () => {
+        document.querySelector('.gallery__arrow--left').addEventListener('click', () => {
             const index = this.gameView.changeImage(-1, this.gameModel.img, this.gameModel.curImgIndex);
             this.gameModel.curImgIndex = index;
         });
